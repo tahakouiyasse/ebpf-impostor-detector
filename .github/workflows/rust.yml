@@ -11,14 +11,21 @@ env:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v4
-    - name: Install bpf-linker
-      run: cargo install bpf-linker
-    - name: Run xtask build
-      run: cargo xtask build
-    - name: Run tests
-      run: cargo test --verbose
+      - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        run: rustup show 
+
+      - name: Add bpf target
+        run: rustup target add bpf-unknown-none
+
+      - name: Install bpf-linker
+        run: cargo install bpf-linker
+
+      - name: Run xtask build
+        run: cargo run -p xtask -- build
+
+      - name: Run tests
+        run: cargo test --verbose
