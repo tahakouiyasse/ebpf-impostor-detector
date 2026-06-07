@@ -1,0 +1,45 @@
+# GHOST-HUNTER :: Workspace Root Manifest
+#
+# Constraint notes:
+#
+#   resolver = "2": MANDATORY. Resolver v1 performs naive feature unification
+#   across all workspace members. Under v1, activating the "user" feature in
+#   gh-analyzer would propagate it into gh-probe's dependency resolution,
+#   silently breaking the no_std gate in gh-common and causing the BPF build
+#   to pull in std-requiring derives. Resolver v2 scopes features per
+#   dependent, preventing this cross-contamination.
+#
+#   panic = "abort" (both profiles): MANDATORY for BPF target compatibility.
+#   bpf-unknown-none has no unwinding infrastructure. Any crate compiled with
+#   panic = "unwind" (the default) cannot link against the BPF target. Setting
+#   abort workspace-wide ensures gh-probe never implicitly pulls in unwinding
+#   symbols, and also produces a smaller, faster gh-analyzer binary.
+#
+#   lto = true + codegen-units = 1: MANDATORY for release. Enables cross-crate
+#   inlining of the Welford update hot path and the ring buffer poll loop in
+#   gh-analyzer. Without LTO, the scoring engine incurs function call overhead
+#   at the gh-common type boundary that defeats the zero-copy contract's
+#   performance intent.
+#
+#   opt-level = 3: Maximum optimization. The scoring and entropy paths are
+#   tight numeric loops; auto-vectorization at opt-level 3 is material.
+#
+#   xtask is listed as a workspace member so `cargo build -p xtask` resolves
+#   correctly. It is invoked via the alias in .cargo/config.toml rather than
+#   directly, to enforce the correct argument passing convention.
+
+[workspace]
+members  = ["gh-common", "gh-probe", "gh-analyzer", "xtask"]
+resolver = "2"
+
+[profile.release]
+opt-level     = 3
+lto           = true
+codegen-units = 1
+panic         = "abort"
+
+[profile.dev]
+# panic = "abort" removed — causes implicit build-std activation on nightly
+# which recompiles core from rust-src and produces E0152 duplicate lang item
+# collision with the prebuilt libcore in the host toolchain.
+# panic=abort is enforced exclusively in the release profile.

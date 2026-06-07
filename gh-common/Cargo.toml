@@ -1,0 +1,33 @@
+# gh-common: ABI-stable cross-boundary types for ghost-hunter.
+#
+# Constraint notes:
+#
+#   static_assertions is an unconditional dependency — NOT feature-gated.
+#   It uses only `core` and is therefore no_std compatible. The layout proofs
+#   (const_assert_eq! on size_of and align_of) must compile on both the
+#   bpf-unknown-none kernel target and the host user target. Gating it behind
+#   "user" would cause the BPF build to skip the proofs entirely, defeating
+#   their purpose.
+#
+#   The "user" feature carries no additional deps. It is a pure cfg gate,
+#   consumed exclusively by #[cfg_attr(feature = "user", derive(Debug, ...))]
+#   and #[cfg(feature = "user")] in events.rs. Downstream user-space crates
+#   (gh-analyzer) must activate this feature in their Cargo.toml.
+#
+#   No [lib] section: the default lib crate type is correct. No rlib/cdylib
+#   override is needed.
+#
+#   No build = "build.rs": constraint B6 forbids build scripts in this crate.
+
+[package]
+name    = "gh-common"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+default = []
+user    = ["dep:aya"]
+
+[dependencies]
+aya = { git = "https://github.com/aya-rs/aya", rev = "bed496b37bd9969372d3263bfd2b02f61bef8def", optional = true }
+static_assertions = "1.1"

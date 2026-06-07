@@ -1,0 +1,47 @@
+[package]
+name    = "gh-analyzer"
+version = "0.1.0"
+edition = "2021"
+
+# ---------------------------------------------------------------------------
+# Dependencies — exact manifest per controller.md Section V, Agent Tactical
+# ---------------------------------------------------------------------------
+[dependencies]
+
+# ABI foundation — "user" feature gates std-requiring derives (Debug, Clone, PartialEq)
+gh-common = { path = "../gh-common", features = ["user"] }
+
+
+aya = { git = "https://github.com/aya-rs/aya", rev = "bed496b37bd9969372d3263bfd2b02f61bef8def" }
+
+# Tokio multi-thread runtime (A1)
+# rt-multi-thread : explicit worker count enforced in main.rs (A4)
+# macros          : #[tokio::main] entry point
+# signal          : SIGINT / SIGTERM graceful shutdown handlers
+# sync            : mpsc channel for JitterCommand dispatch path (A3)
+# io-util         : async I/O primitives for ring buffer polling
+# fs              : /dev/urandom read for SmallRng one-time seed (S4, ADR-005)
+tokio = { version = "1", features = [
+    "rt-multi-thread",
+    "macros",
+    "net",
+    "signal",
+    "sync",
+    "io-util",
+    "fs",
+] }
+
+tokio-util = { version = "0.7", features = ["rt"] }
+
+# SmallRng (xoshiro128++) — seeded once from /dev/urandom at startup (S4, ADR-005)
+# Per-event re-seed is FORBIDDEN
+rand = { version = "0.8", features = ["small_rng"] }
+
+# Structured leveled logging — WARNING mandatory for out-of-range λ (S3)
+tracing = "0.1"
+
+# Runtime log filtering via RUST_LOG environment variable
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# Ergonomic error propagation — replaces all unwrap()/expect() in production paths (A5)
+anyhow = "1"

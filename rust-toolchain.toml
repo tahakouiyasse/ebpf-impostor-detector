@@ -1,0 +1,40 @@
+# GHOST-HUNTER :: Rust Toolchain Pin
+#
+# Constraint notes:
+#
+#   channel = "nightly-2026-04-01": Pinned to a specific nightly date to
+#   guarantee reproducible builds. The eBPF compilation pipeline (-Z build-std)
+#   is an unstable feature gated behind nightly. Floating "nightly" channels
+#   break at toolchain rollover when unstable APIs shift.
+#
+#   If this date is unavailable in your rustup installation, find the nearest
+#   date where all components below are green for x86_64-unknown-linux-gnu at:
+#     https://rust-lang.github.io/rustup-components-history
+#   Then update `channel` to that date.
+#
+#   components:
+#     rust-src: MANDATORY. Required by -Z build-std=core to rebuild `core`
+#               from source for the bpf-unknown-none target. No prebuilt
+#               rust-std artifact exists for bpf-unknown-none on any nightly
+#               date — the target is always built from source via rust-src.
+#     rustfmt:  Enforced formatting standard.
+#     clippy:   Static analysis.
+#     llvm-tools-preview: Required by bpf-linker for LLVM bitcode emission
+#               during BPF ELF object generation. If unavailable on your
+#               chosen nightly date, remove this line and install llvm-tools
+#               separately via your system package manager.
+#
+#   targets:
+#     x86_64-unknown-linux-gnu ONLY. Do NOT add bpf-unknown-none here.
+#
+#     CRITICAL: bpf-unknown-none has no prebuilt rust-std component on any
+#     nightly date. Listing it in `targets` causes rustup to attempt a
+#     prebuilt download that always fails with "component unavailable".
+#     The BPF target is handled entirely at compile time by -Z build-std=core
+#     using the rust-src component. rustup never needs to download a prebuilt
+#     artifact for it.
+
+[toolchain]
+channel    = "nightly-2026-04-01"
+components = ["rust-src", "rustfmt", "clippy", "llvm-tools-preview"]
+targets    = ["x86_64-unknown-linux-gnu"]

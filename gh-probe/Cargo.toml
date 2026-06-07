@@ -1,0 +1,15 @@
+[package]
+name = "gh-probe"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "gh-probe"
+path = "src/main.rs"
+test = false
+bench = false
+
+
+[dependencies]
+aya-ebpf = { git = "https://github.com/aya-rs/aya", rev = "bed496b37bd9969372d3263bfd2b02f61bef8def" }
+gh-common = { path = "../gh-common", default-features = false }
