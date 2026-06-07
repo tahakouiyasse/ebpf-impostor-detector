@@ -18,10 +18,8 @@ jobs:
       - name: Install Rust toolchain
         run: rustup show
 
-      - name: Add bpf support
-        run: |
-          rustup component add rust-src
-          rustup target add bpf-unknown-none
+      - name: Ensure required components
+        run: rustup component add rust-src
 
       - name: Install bpf-linker
         run: cargo install bpf-linker
