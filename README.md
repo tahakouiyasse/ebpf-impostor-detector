@@ -221,6 +221,9 @@ Structured logs are emitted via `tracing-subscriber`. Set `RUST_LOG=ghost_hunter
 
 ---
 
+## Contact
+For architectural inquiries, research collaboration, or professional opportunities, reach out at [tahakouiyasse@protonmail.com].
+
 ## License
 
 GHOST-HUNTER is licensed under the **GNU General Public License v2.0 (GPLv2)**, in alignment with Linux kernel compatibility requirements for eBPF programs interacting with kernel internals.
