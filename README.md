@@ -1,4 +1,4 @@
-# GHOST-HUNTER
+# ebpf-impostor-detector
 
 > Host Intrusion Detection & Active Signaling System (HIDASS) for Linux 5.15+. Detects APT TTY sessions via Stackelberg game-theoretic jitter injection. Built on Rust, eBPF/Aya, and Tokio async runtime with zero-copy RingBuf semantics.
 
@@ -36,7 +36,7 @@ For an in-depth analysis of the signaling strategy, game-theoretic anomaly detec
 
 ## White Paper
 
-**[`docs/WP.pdf`](https://github.com/tahakouiyasse/ghost-hunter/blob/main/docs/WP.pdf)**
+**[`docs/WP.pdf`](https://github.com/tahakouiyasse/ebpf-impostor-detector/blob/main/docs/WP.pdf)**
 
 The white paper constitutes the formal technical specification for GHOST-HUNTER's detection and signaling model. It covers:
 
